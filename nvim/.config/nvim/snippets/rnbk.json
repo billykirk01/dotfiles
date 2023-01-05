@@ -1,0 +1,406 @@
+{
+    "Atrium NP Servers": {
+        "prefix": "Atrium NP Servers",
+        "description": "",
+        "body": [
+            "et0905vodbtst01 - POC TST TSTRPT OLDTST MPE HYPE",
+            "et0905vodbtst02 - MST REF PREP ACE{1-5} PLY",
+            "et0905vodbtst03 - TSTAPP TSTUTL",
+            "et0905vodbtst04 - TSTAPP TSTUTL",
+            "et0905vodbsup01 - SUP REL PJX CNV"
+        ]
+    },
+    "Atrium NP Servers - Inline": {
+        "prefix": "Atrium NP Servers - Inline",
+        "description": "",
+        "body": [
+            "et0905vodbtst01 et0905vodbtst02 et0905vodbtst03 et0905vodbtst04 et0905vodbsup01"
+        ]
+    },
+    "Atrium PRD Servers": {
+        "prefix": "Atrium PRD Servers",
+        "description": "",
+        "body": [
+            "et0905vodbprd01 - PRD",
+            "et0905rodbprd01 - DRPRD",
+            "et0905vodbrpt01 - RPT",
+            "et0905vodbecp{01-15} - PRDAPP PRDUTL",
+            "et0905rodbecp{01-15} - PRDAPP PRDUTL",
+            "et0905vodbsup01 - SUP"
+        ]
+    },
+    "Atrium PRD Servers - Inline": {
+        "prefix": "Atrium PRD Servers - Inline",
+        "description": "",
+        "body": [
+            "et0905vodbprd01, et0905rodbprd01, et0905vodbrpt01, et0905vodbecp{01-15}, et0905rodbecp{01-15}"
+        ]
+    },
+    "Bryan NP Servers": {
+        "prefix": "Bryan NP Servers",
+        "description": "",
+        "body": [
+            "et1031vodbtst02 - POC TST TSTRPT OLDTST MPE HYPE",
+            "et1031vodbsup01 - REL PJX SUP"
+        ]
+    },
+    "Bryan NP Servers - Inline": {
+        "prefix": "Bryan NP Servers",
+        "description": "",
+        "body": [
+            "et1031vodbtst02, et1031vodbsup01"
+        ]
+    },
+    " Bryan PRD Servers": {
+        "prefix": "Bryan PRD Servers",
+        "description": "",
+        "body": [
+            "et1031vodbprd01 - PRD",
+            "et1031rodbprd01 - DRPRD",
+            "et1031vodbrpt01 - RPT",
+            "et1031vodbtrn01 - MST REF PREP EXAM PLY ACE{1-4}",
+            "et1031vodbsup01 - SUP"
+        ]
+    },
+    " Bryan PRD Servers - Inline": {
+        "prefix": "Bryan PRD Servers - Inline",
+        "description": "",
+        "body": [
+            "et1031vodbprd01, et1031rodbprd01, et1031vodbrpt01, et1031vodbtrn01"
+        ]
+    },
+    "Olmsted NP Servers": {
+        "prefix": "Olmsted NP Servers",
+        "description": "",
+        "body": [
+            "et1077rodbtst02 - POC TST TSTRPT MPE HYPE",
+            "et1077rodbsup02 - SUP REL PJX"
+        ]
+    },
+    "Olmsted NP Servers - Inline": {
+        "prefix": "Olmsted NP Servers - Inline",
+        "description": "",
+        "body": [
+            "et1077rodbtst02, et1077rodbsup02"
+        ]
+    },
+    "Olmsted PRD Servers": {
+        "prefix": "Olmsted PRD Servers",
+        "description": "",
+        "body": [
+            "et1077vodbprd01 - PRD",
+            "et1077rodbprd01 - DRPRD",
+            "et1077vodbrpt01 - RPT",
+            "et1077rodbsup02 - SUP",
+            "et1077rodbtrn02 - MST REF PREP ACE{1-4} PLY"
+        ]
+    },
+    "Olmsted PRD Servers - Inline": {
+        "prefix": "Olmsted PRD Servers",
+        "description": "",
+        "body": [
+            "et1077vodbprd01, et1077rodbprd01, et1077vodbrpt01, et1077rodbtrn02"
+        ]
+    },
+    "Alabama NP Servers": {
+        "prefix": "Alabama NP Servers",
+        "description": "",
+        "body": [
+            "et1246rodbtst01 - POC TST TSTRPT MPE HYPE",
+            "et1246rodbsup01 - SUP PJX REL"
+        ]
+    },
+    "Alabama NP Servers - Inline": {
+        "prefix": "Alabama NP Servers - Inline",
+        "description": "",
+        "body": [
+            "et1246rodbtst01, et1246rodbsup01"
+        ]
+    },
+    "Alabama PRD Servers": {
+        "prefix": "Alabama PRD Servers - Inline",
+        "description": "",
+        "body": [
+            "et1246vodbprd01 - PRD",
+            "et1246rodbprd01 - DRPRD",
+            "et1246rodbrpt01 - RPT",
+            "et1246rodbtrn01 - MST REF PREP ACE{1-5} PLY EXAM",
+            "et1246rodbsup01 - SUP"
+        ]
+    },
+    "Alabama PRD Servers - Inline": {
+        "prefix": "Alabama PRD Servers - Inline",
+        "description": "",
+        "body": [
+            "et1246vodbprd01, et1246rodbprd01, et1246rodbrpt01"
+        ]
+    },
+    "Scope": {
+        "prefix": "Scope",
+        "description": "",
+        "body": [
+            "${1:MWP} > ${2:MWC}",
+            "",
+            "${3:CHG} - ${4:Title}",
+            "",
+            "    Server - envs: ",
+            "    ${5:etXXXX - ENV}",
+            "",
+            "    Staged in:",
+            "    ${6:Runbook}"
+        ]
+    },
+    "CHG": {
+        "prefix": "chg",
+        "description": "",
+        "body": [
+            "${3:CHG} - ${4:Title}",
+            "",
+            "    Server - envs: ",
+            "    ${5:etXXXX - ENV}",
+            "",
+            "    Staged in:",
+            "    ${6:Runbook}"
+        ]
+    },
+    "Disk Expanison": {
+        "prefix": "Disk Expanison",
+        "description": "",
+        "body": [
+            "[] Move disk expansion ${1:CHG} to implement",
+            "",
+            "[] Submit `Expand List of Disks by UUID` automation request in SN:",
+            "${2:et####vodbtst01}",
+            "UUID,size",
+            "",
+            "[] As root (#) on ${2:et####vodbtst01}",
+            "# rescan-scsi-bus.sh --resize",
+            "# lsscsi -is #confirm disk size changes (current show as ${3:size} GB)",
+            "# for disk in $(pvs | grep ${4:tstvg} | awk '{print \\$1}'); do pvresize \\$disk; done",
+            "# pvs #confirm PV size changes",
+            "# vgs #confirm free space in VG",
+            "# lvresize -r -l +100%FREE /dev/mapper/${5:tstvg}-${6:tst}",
+            "",
+            "[] Move disk expansion ${1:CHG} to review and close if no issues"
+        ]
+    },
+    "NP Patching - IRIS": {
+        "prefix": "NP Patching - IRIS",
+        "description": "",
+        "body": [
+            "[] Move puppet/patching ${1:CHG} to implement.",
+            "",
+            "As epicadm (\\$) / root (#) on ${2:vm(s)}:",
+            "    [] Disable redalert and bring environments to RL-D",
+            "    \\$ /epic/redalert/bin/ra_sched --da 1h",
+            "    \\$ for inst in \\$(iris qlist | cut -d^ -f2); do \\$inst/../bin/runlevel -r d & done; wait; /epic/bin/epiccontrol all",
+            "",
+            "    [] Run Puppet at RL-D ",
+            "    # puppet agent -t --no-noop",
+            "",
+            "    [] Bring environments to RL-C",
+            "    \\$ for inst in \\$(iris qlist | cut -d^ -f2); do \\$inst/../bin/runlevel -r c & done; wait; /epic/bin/epiccontrol all",
+            "",
+            "    [] Patch",
+            "    # apt update",
+            "    # apt dist-upgrade",
+            "    # apt autoremove",
+            "    # apt clean",
+            "    # apt list --upgradeable #confirm nothing else to apply",
+            "    # shutdown -r now",
+            "",
+            "    [] Post-reboot health checks",
+            "    \\$ /epic/redalert/bin/ra_sched --ea",
+            "    \\$ /epic/redalert/bin/ra_sched --status #`ra_sched --start` if not running, `ra_sched --ea` if alerting disabled.",
+            "    \\$ /epic/redalert/bin/esmp --status #`esmp --start` if not running.",
+            "    \\$ /epic/bin/epiccontrol all #expect all at RL-UA",
+            "",
+            "    [] Final puppet run",
+            "    # puppet agent -t --no-noop",
+            "",
+            "[] Move puppet/patching ${1:CHG} to review and close if no issues",
+            "",
+            "[] Move ${3:HRQ} to closed complete"
+        ]
+    },
+    "Bolt Patching": {
+        "prefix": "Bolt Patching",
+        "description": "",
+        "body": [
+            "[] Move puppet/patching ${1:CHG} implement",
+            "",
+            "[] Download the json files attached to ${2:MWC} and move it onto ehcr-lindev01",
+            "",
+            "As {user}-t1 (\\$) on ehcr-lindev01:",
+            "    [] Setup bolt",
+            "    \\$ puppet_utils token -f",
+            "    \\$ puppet_utils bolt",
+            "    \\$ bolt module install --no-resolve",
+            "",
+            "    [] Run the bolt plans",
+            "    \\$ bolt plan run odba_maintenance --params @${3:et####_np_patching.json}",
+            "",
+            "[] Move puppet/patching ${1:CHG} to review and close if no issues",
+            "",
+            "[] Move tencon ${4:HRQ} to testing"
+        ]
+    },
+    "Refresh - NP or TRN": {
+        "prefix": "Refresh",
+        "description": "",
+        "body": [
+            "[] Move refresh ${1:CHG} to implement",
+            "",
+            "As epicadm (\\$) on ${2:vm}:",
+            "    [] Remove the break hook script",
+            "    \\$ /epic/bin/configure",
+            "        Environment Copy >> Scenarios >> ${3:scenario}",
+            "            Edit Hooks",
+            "                d. Delete hook ",
+            "                    Hook script:  /bin/false \"prevent unplanned refreshes\"",
+            "                    Stage to run: PREEXECUTION",
+            "",
+            "    [] Kick off the refresh ",
+            "    \\$ /epic/bin/envcopy -s ${3:scenario}",
+            "    ",
+            "    [] Monitor the refresh",
+            "    \\$ tail -f /epic/logs/envcopy_${3:scenario}.log.${4:date}",
+            "    ",
+            "    [] post refresh health checks",
+            "    \\$ /epic/redalert/bin/ra_sched --status #`ra_sched --start` if not running, `ra_sched --ea` if alerting disabled.",
+            "    \\$ /epic/redalert/bin/esmp --status #`esmp --start` if not running.",
+            "    \\$ /epic/bin/epiccontrol all #expect all at RL-UA",
+            "    ",
+            "    [] Add the hook script back in so this refresh doesn't get run accidentally",
+            "    \\$ /epic/bin/configure",
+            "        Environment Copy >> Scenarios >> ${3:scenario}",
+            "            Edit Hooks",
+            "                a. add hook ",
+            "                    Hook script:  /bin/false \"prevent unplanned refreshes\"",
+            "                    Stage to run: PREEXECUTION",
+            "",
+            "[] Move refresh ${1:CHG} to review and close if no issues"
+        ]
+    },
+    "Reinit - full size": {
+        "prefix": "Reinit - Full Size",
+        "description": "",
+        "body": [
+            "[] Move reinit ${1:CHG} to implement",
+            "",
+            "As epicadm (\\$) / root (#) on ${2:vm}:",
+            "    [] Change the stage on the current break hook script from `PREEXECUTION` to `PRERUNTASK`",
+            "    \\$ /epic/bin/configure",
+            "        Environment Copy >> Scenarios >> {3:scenario} >> Edit Hooks",
+            "",
+            "    [] Save off a new environment creation EVT record from ${4:saveconfig env upper} to be used for the reinit",
+            "    \\$ rm /epicfiles/nonprdfiles/install/envinit/zEnvCopy*",
+            "    \\$ iris session ${5:saveconfig env lower} -U ${5:saveconfig env lower}",
+            "        d saveConfig^%ZeENV(\"/epicfiles/nonprdfiles/install/envinit/\",1,${6:evtID})",
+            "",
+            "As epicadm (\\$) / root (#) on ${2:vm}:",
+            "    [] Submit the `Copy PRD to SUP or RPT` automation request to refresh ${7:target env upper} from PRD",
+            "    Tenant ID: et${8:####}",
+            "    Datacenter: ${9:datacenter (v|r)}",
+            "    PRD environment: {blank}",
+            "    Environment: ${10:target env lower}",
+            "    PRD VM number: 01",
+            "    VM number: 01",
+            "",
+            "    [] Monitor refresh log and wait for envcopy to fail at pre-runtasks",
+            "    \\$ tail -f /epic/logs/envcopy_{3:scenario}.log.220912",
+            "",
+            "    [] Run recreate_environment from the PREINIT stage",
+            "    # /usr/local/epic_hosting/ruby/bin/recreate_environment -t ${7:target env upper} --start_stage PREINIT",
+            "    # /usr/local/epic_hosting/ruby/bin/recreate_environment -t ${7:target env upper} --start_stage PREINIT --no_dry_run",
+            "",
+            "    [] Configure event logging",
+            "    d setup^EPMUTIL ",
+            "        Event Logging Settings >> page down twice to `File Directories for this Environment`",
+            "            Node Name: ${10:target env lower}",
+            "            File Directory: /epicfiles/nonprdfiles/event_log/${10:target env lower}",
+            "    ",
+            "    [] Restore non-prd cert paths for ECF/TLS",
+            "    d ^%ZeUSTBL",
+            "        Communication >> Security >> TLS Settings",
+            "        Public certificate file: /epic/local/epic/nonprd/certs/ecf-tls-np.cer",
+            "        Private key file: /epic/local/epic/nonprd/certs/private/ecf-tls-np.key",
+            "",
+            "    [] Reset envcopy and re-enable alerting",
+            "    \\$ /epic/bin/envcopy --reset -s {3:scenario}",
+            "    \\$ /epic/redalert/bin/ra_sched --ea",
+            "",
+            "    [] Change the stage on the current break hook script from `PRERUNTASK` to `PREEXECUTION`",
+            "    \\$ /epic/bin/configure",
+            "        Environment Copy >> Scenarios >> {3:scenario} >> Edit Hooks",
+            "",
+            "[] Move reinit ${1:CHG} to review and close if no issues"
+        ]
+    },
+    "Downtime SUs": {
+        "prefix": "Downtime SUs",
+        "description": "",
+        "body": [
+            "[] Move SU ${1:CHG} to implement",
+            "",
+            "[] Move Kuiper upgrade console through the `Mark as Done to Automatically Bring the Environments Down NOW` step  and through the remainder of the deployment",
+            "",
+            "[] Move SU ${1:CHG} to review and close if no issues"
+        ]
+    },
+    "Downtime SUs + License Apply": {
+        "prefix": "Downtime SUs + License Apply",
+        "description": "",
+        "body": [
+            "[] Move SU ${1:CHG} to implement",
+            "[] Move License apply ${2:CHG} to implement",
+            "",
+            "[] Move Kuiper upgrade console through the `Mark as Done to Automatically Bring the Environments Down NOW` step and up to but not through the `Apply the Licenses` step",
+            "",
+            "    == At the \"Apply the Licenses\" step ==",
+            "    As epicadm (\\$) on ${3:et0905vodbtst01}:",
+            "        Apply the staged license in [] ${4:ENV}:",
+            "            \\$ iris session {env} -U {env}",
+            "                d ^%ZeADMIN >> Apply Stage Licenses",
+            "    ",
+            "[] Move Kuiper upgrade console through the `Apply the Licenses` step and through the remainder of the deployment",
+            "[] Move SU ${1:CHG} to review and close if no issues",
+            "[] Move License apply ${2:CHG} to review and close if no issues"
+        ]
+    },
+    "rc": {
+        "prefix": "rc",
+        "description": "",
+        "body": [
+            "review and close if no issues"
+        ]
+    },
+    "for loop - iris": {
+        "prefix": "for loop - iris",
+        "description": "",
+        "body": [
+            "\\$ for inst in \\$(iris qlist | cut -d^ -f2); do ${0:command}; done"
+        ]
+    },
+    "for loop - GT.M": {
+        "prefix": "for loop - GT.M",
+        "description": "",
+        "body": [
+            "\\$ for inst in \\$(grep PATH /epic/conf/environments.def | cut -d= -f2 | cut -d/ -f3); do ${0:command}; done"
+        ]
+    },
+    "for loop - iris - runlevel": {
+        "prefix": "for loop - runlevel - iris",
+        "description": "",
+        "body": [
+            "\\$ for inst in \\$(iris qlist | cut -d^ -f2); do /epic/\\$inst/bin/runlevel -r u & done; wait; /epic/bin/epiccontrol all"
+        ]
+    },
+    "for loop - GT.M - runlevel": {
+        "prefix": "for loop - runlevel - GT.M",
+        "description": "",
+        "body": [
+            "\\$ for inst in \\$(grep PATH /epic/conf/environments.def | cut -d= -f2 | cut -d/ -f3); do /epic/\\$inst/bin/runlevel -r u & done; wait; /epic/bin/epiccontrol all"
+        ]
+    }
+}
