@@ -10,6 +10,8 @@ alias vim='nvim'
 alias top='htop'
 alias fd='fdfind'
 
+alias remote-desktop='xfreerdp /u:bkirk -gfx -sound /f /monitors:1 /v:epic95305.dhcp.epic.com -grab-keyboard'
+
 . ~/.cargo/env
 
 export NVM_DIR="$HOME/.nvm"
