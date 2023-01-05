@@ -1,0 +1,30 @@
+window {
+  color: white;
+  background-color: #1e222a;
+  padding: 50px;
+}
+
+#input {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin: 20px 15px;
+}
+
+#inner-box {
+  margin: 20px;
+}
+
+#entry {
+  border-radius: 20px;
+}
+
+#entry:selected {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#img {
+  margin: 10px 10px;
+}
