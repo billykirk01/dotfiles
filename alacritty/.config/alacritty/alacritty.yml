@@ -1,6 +1,6 @@
 ## Import files (Colors, Fonts, Etc)
 import:
-  - ~/.config/alacritty/colors.yml
+  - ~/.config/alacritty/themes/horizon-dark.yaml
 
 ## Set environment variables
 env:
@@ -29,7 +29,7 @@ font:
   size: 13
 
   normal:
-      family: "FiraCode Nerd Font"
+      family: "JetBrainsMono Nerd Font Mono"
 
 ## Cursor
 cursor:
