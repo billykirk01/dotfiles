@@ -285,6 +285,7 @@ require('nvim-treesitter.configs').setup({
         'javascript',
         'typescript',
         'tsx',
+        'svelte',
         'lua',
         'css',
         'json',
@@ -633,14 +634,6 @@ require("mason-lspconfig").setup_handlers({
     function(server_name) -- default handler 
         require("lspconfig")[server_name].setup {}
     end,
-    -- ["denols"] = function()
-    --     lspconfig.denols.setup({
-    --         root_dir = lspconfig.util.root_pattern("deno.json"),
-    --         init_options = {
-    --             lint = true,
-    --         },
-    --     })
-    -- end,
     ["tsserver"] = function()
         lspconfig.tsserver.setup({
             single_file_support = false
