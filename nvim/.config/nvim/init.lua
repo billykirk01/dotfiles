@@ -21,6 +21,12 @@ vim.keymap.set('n', '<right>', '')
 vim.keymap.set('n', '<up>', '')
 vim.keymap.set('n', '<down>', '')
 
+-- move with ctrl + <left,right,up,down>
+vim.keymap.set('i', '<c-h>', '<left>')
+vim.keymap.set('i', '<c-l>', '<right>')
+vim.keymap.set('i', '<c-k>', '<up>')
+vim.keymap.set('i', '<c-j>', '<down>')
+
 -- Space as leader key
 vim.g.mapleader = ';'
 
@@ -527,21 +533,24 @@ lsp_defaults.capabilities = vim.tbl_deep_extend(
     require('cmp_nvim_lsp').default_capabilities()
 )
 
-lspconfig.denols.setup {
-  on_attach = on_attach,
-  root_dir = lspconfig.util.root_pattern("deno.json"),
-  init_options = {
-    lint = true,
-  },
-}
 
-lspconfig.tsserver.setup {
-  on_attach = on_attach,
-  root_dir = lspconfig.util.root_pattern("package.json"),
-  init_options = {
-    lint = true,
-  },
-}
+-- lspconfig.rust_analyzer.setup({})
+--
+-- lspconfig.denols.setup {
+--   on_attach = on_attach,
+--   root_dir = lspconfig.util.root_pattern("deno.json"),
+--   init_options = {
+--     lint = true,
+--   },
+-- }
+--
+-- lspconfig.tsserver.setup {
+--   on_attach = on_attach,
+--   root_dir = lspconfig.util.root_pattern("package.json"),
+--   init_options = {
+--     lint = true,
+--   },
+-- }
 
 
 
@@ -619,21 +628,22 @@ vim.api.nvim_create_autocmd('LspAttach', {
 ---
 -- LSP servers
 ---
--- local default_handler = function(server)
---     -- See :help lspconfig-setup
---     lspconfig[server].setup({})
--- end
---
--- -- See :help mason-lspconfig-dynamic-server-setup
--- require('mason-lspconfig').setup_handlers({
---     default_handler,
---     ['tsserver'] = function()
---         lspconfig.tsserver.setup({
---             settings = {
---                 completions = {
---                     completeFunctionCalls = true
---                 }
---             }
---         })
---     end
--- })
+-- See :help mason-lspconfig-dynamic-server-setup
+require("mason-lspconfig").setup_handlers({
+    function(server_name) -- default handler 
+        require("lspconfig")[server_name].setup {}
+    end,
+    -- ["denols"] = function()
+    --     lspconfig.denols.setup({
+    --         root_dir = lspconfig.util.root_pattern("deno.json"),
+    --         init_options = {
+    --             lint = true,
+    --         },
+    --     })
+    -- end,
+    ["tsserver"] = function()
+        lspconfig.tsserver.setup({
+            single_file_support = false
+        })
+    end,
+})
