@@ -26,10 +26,10 @@ window:
 
 ## Fonts
 font:
-  size: 14
+  size: 15
 
   normal:
-      family: "FiraCode Nerd Font"
+      family: "JetBrainsMono Nerd Font"
 
 ## Cursor
 cursor:
