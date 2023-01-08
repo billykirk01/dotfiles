@@ -26,7 +26,7 @@ window:
 
 ## Fonts
 font:
-  size: 13
+  size: 14
 
   normal:
       family: "FiraCode Nerd Font"
