@@ -38,8 +38,8 @@ vim.keymap.set('n', '<leader>o', 'o<esc>k')
 vim.keymap.set('n', '<leader>O', 'O<esc>j')
 
 -- Snippets
-vim.keymap.set({ 'n', 's' }, '<leader><tab>', '<cmd>lua require"luasnip".jump(1)<CR>')
-vim.keymap.set({ 'n', 's' }, '<leader><s-tab>', '<cmd>lua require"luasnip".jump(-1)<CR>')
+vim.keymap.set({ 'n', 's' }, '<leader><tab>', ':lua require"luasnip".jump(1)<CR>')
+vim.keymap.set({ 'n', 's' }, '<leader><s-tab>', ':lua require"luasnip".jump(-1)<CR>')
 vim.keymap.set('s', '<leader>r', '<esc>viw"+p')
 
 -- Move in windows, buffers, and tabs
@@ -534,25 +534,6 @@ lsp_defaults.capabilities = vim.tbl_deep_extend(
 )
 
 
--- lspconfig.rust_analyzer.setup({})
---
--- lspconfig.denols.setup {
---   on_attach = on_attach,
---   root_dir = lspconfig.util.root_pattern("deno.json"),
---   init_options = {
---     lint = true,
---   },
--- }
---
--- lspconfig.tsserver.setup {
---   on_attach = on_attach,
---   root_dir = lspconfig.util.root_pattern("package.json"),
---   init_options = {
---     lint = true,
---   },
--- }
-
-
 
 ---
 -- Diagnostic customization
@@ -608,19 +589,20 @@ vim.api.nvim_create_autocmd('LspAttach', {
         -- You can search each function in the help page.
         -- For example :help vim.lsp.buf.hover()
 
-        bufmap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>')
-        bufmap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>')
-        bufmap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>')
-        bufmap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>')
-        bufmap('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>')
-        bufmap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>')
-        bufmap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>')
-        bufmap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>')
-        bufmap('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>')
-        bufmap('x', '<F4>', '<cmd>lua vim.lsp.buf.range_code_action()<cr>')
-        bufmap('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>')
-        bufmap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
-        bufmap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
+        bufmap('n', 'ff', ':lua vim.lsp.buf.format()<cr>')
+        bufmap('n', 'K', ':lua vim.lsp.buf.hover()<cr>')
+        bufmap('n', 'gd', ':lua vim.lsp.buf.definition()<cr>')
+        bufmap('n', 'gD', ':lua vim.lsp.buf.declaration()<cr>')
+        bufmap('n', 'gi', ':lua vim.lsp.buf.implementation()<cr>')
+        bufmap('n', 'go', ':lua vim.lsp.buf.type_definition()<cr>')
+        bufmap('n', 'gr', ':lua vim.lsp.buf.references()<cr>')
+        bufmap('n', '<C-k>', ':lua vim.lsp.buf.signature_help()<cr>')
+        bufmap('n', '<F2>', ':lua vim.lsp.buf.rename()<cr>')
+        bufmap('n', '<F4>', ':lua vim.lsp.buf.code_action()<cr>')
+        bufmap('x', '<F4>', ':lua vim.lsp.buf.range_code_action()<cr>')
+        bufmap('n', 'gl', ':lua vim.diagnostic.open_float()<cr>')
+        bufmap('n', '[d', ':lua vim.diagnostic.goto_prev()<cr>')
+        bufmap('n', ']d', ':lua vim.diagnostic.goto_next()<cr>')
     end
 })
 
@@ -630,7 +612,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 ---
 -- See :help mason-lspconfig-dynamic-server-setup
 require("mason-lspconfig").setup_handlers({
-    function(server_name) -- default handler 
+    function(server_name) -- default handler
         require("lspconfig")[server_name].setup {}
     end,
     -- ["denols"] = function()
