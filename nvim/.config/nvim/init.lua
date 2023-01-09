@@ -56,7 +56,7 @@ vim.keymap.set('n', '<leader>3', ':BufferLineGoToBuffer 3<CR>')
 vim.keymap.set('n', '<leader>4', ':BufferLineGoToBuffer 4<CR>')
 vim.keymap.set('n', '<leader>5', ':BufferLineGoToBuffer 5<CR>')
 
--- escape terminal mode
+-- Escape terminal mode
 vim.keymap.set('t', '<esc><esc>', '<c-\\><c-n>')
 
 -- Basic clipboard interaction
@@ -510,11 +510,13 @@ require('mason').setup({
 -- See :help mason-lspconfig-settings
 require('mason-lspconfig').setup({
     ensure_installed = {
+        'sumneko_lua',
+        'denols',
         'tsserver',
+        'svelte',
         'eslint',
         'html',
         'cssls',
-        'denols',
         'rust_analyzer',
         'gopls'
     }
@@ -522,10 +524,37 @@ require('mason-lspconfig').setup({
 
 
 ---
+-- LSP servers
+---
+-- See :help mason-lspconfig-dynamic-server-setup
+local lspconfig = require('lspconfig')
+require("mason-lspconfig").setup_handlers({
+    function(server_name) -- default handler
+        lspconfig[server_name].setup {}
+    end,
+    ["tsserver"] = function()
+        lspconfig.tsserver.setup({
+            single_file_support = false
+        })
+    end,
+    ["sumneko_lua"] = function()
+        lspconfig.sumneko_lua.setup({
+            settings = {
+                Lua = {
+                    diagnostics = {
+                        globals = { 'vim' }
+                    }
+                }
+            }
+        })
+    end,
+})
+
+
+---
 -- LSP config
 ---
 -- See :help lspconfig-global-defaults
-local lspconfig = require('lspconfig')
 local lsp_defaults = lspconfig.util.default_config
 
 lsp_defaults.capabilities = vim.tbl_deep_extend(
@@ -533,7 +562,6 @@ lsp_defaults.capabilities = vim.tbl_deep_extend(
     lsp_defaults.capabilities,
     require('cmp_nvim_lsp').default_capabilities()
 )
-
 
 
 ---
@@ -575,6 +603,7 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
     { border = 'rounded' }
 )
 
+
 ---
 -- LSP Keybindings
 ---
@@ -605,20 +634,4 @@ vim.api.nvim_create_autocmd('LspAttach', {
         bufmap('n', '[d', ':lua vim.diagnostic.goto_prev()<cr>')
         bufmap('n', ']d', ':lua vim.diagnostic.goto_next()<cr>')
     end
-})
-
-
----
--- LSP servers
----
--- See :help mason-lspconfig-dynamic-server-setup
-require("mason-lspconfig").setup_handlers({
-    function(server_name) -- default handler
-        require("lspconfig")[server_name].setup {}
-    end,
-    ["tsserver"] = function()
-        lspconfig.tsserver.setup({
-            single_file_support = false
-        })
-    end,
 })
