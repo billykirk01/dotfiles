@@ -45,6 +45,8 @@ vim.keymap.set('s', '<leader>r', '<esc>viw"+p')
 -- Move in windows, buffers, and tabs
 vim.keymap.set('n', '<c-H>', '<c-w>h')
 vim.keymap.set('t', '<c-H>', '<c-\\><c-n><c-w>h') -- move from terminal back to editor window
+vim.keymap.set('n', '<c-s-right>', '<c-w><')
+vim.keymap.set('n', '<c-s-left>', '<c-w>>')
 vim.keymap.set('n', '<c-L>', '<c-w>l')
 vim.keymap.set('n', 'H', ':BufferLineCyclePrev<CR>')
 vim.keymap.set('n', 'L', ':BufferLineCycleNext<CR>')
@@ -534,6 +536,7 @@ require("mason-lspconfig").setup_handlers({
     end,
     ["tsserver"] = function()
         lspconfig.tsserver.setup({
+            root_dir = lspconfig.util.root_pattern("package.json"),
             single_file_support = false
         })
     end,
