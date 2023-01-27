@@ -66,7 +66,8 @@ vim.keymap.set({ 'n', 'x' }, '<leader>y', '"+y')
 vim.keymap.set({ 'n', 'x' }, '<leader>p', '"+p')
 vim.keymap.set({ 'n', 'x' }, '<leader>r', 'viw"+p')
 vim.keymap.set('v', '<leader>r', '"+p')
-vim.keymap.set({ 'v' }, '<leader>gr', 'y:%s@<c-r>"@@g|\'\'<left><left><left><left><left>')
+vim.keymap.set('v', '<leader>gr', 'y:%s@<c-r>"@@g|\'\'<left><left><left><left><left>')
+vim.keymap.set('v', '<leader>sr', ':s@<c-r>"@@g<left><left>')
 
 -- Delete text
 vim.keymap.set({ 'n', 'x' }, 'x', '"_x')

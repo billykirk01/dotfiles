@@ -13,7 +13,7 @@ alias top='htop'
 alias fd='fdfind'
 
 export PATH=$PATH:/opt/cisco/anyconnect/bin
-alias remote-desktop='xfreerdp /u:bkirk -gfx -sound /f /monitors:1 /v:epic95305.dhcp.epic.com -grab-keyboard'
+alias remote-desktop='xfreerdp /u:bkirk -gfx -sound -grab-keyboard /monitors:1 /f /v:epic95305.dhcp.epic.com'
 
 . ~/.cargo/env
 
