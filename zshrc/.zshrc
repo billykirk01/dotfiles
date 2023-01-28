@@ -1,6 +1,6 @@
 alias ll='exa -lr'
 alias la='exa -lra'
-alias lt='exa -Tr'
+alias lt='exa -a --tree --level=3'
 
 alias gs='git status'
 alias ga='git add .'
@@ -28,7 +28,7 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:/home/billy/.local/bin
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/.zsh/zsh-vi-mode/zsh-vi-mode.zsh
+#source ~/.zsh/zsh-vi-mode/zsh-vi-mode.zsh
 
 precmd() {
     precmd() {
