@@ -14,6 +14,7 @@ syntax match LineComment "#\{2}[^#]*"
 syntax match Checkbox "\[x\?\]"
 syntax match Header "== .* =="
 syntax match Epicadm "epicadm (\$)"
+syntax match Epicdmn "epicdmn (\$)"
 syntax match Root "root (#)"
 syntax match HostingRecord "\(CHG\|HRQ\|MWP\|MWC\|INC\)\w*"
 syntax match VM "et\d\{4}\w\+"
@@ -28,6 +29,7 @@ highlight def link LineComment Comment
 highlight Checkbox ctermfg=180 guifg=#e5c07b
 highlight Header ctermfg=204 guifg=#e06c75
 highlight Epicadm ctermfg=114 guifg=#98c379
+highlight Epicdmn ctermfg=114 guifg=#98c379
 highlight Root ctermfg=204 guifg=#e06c75
 highlight HostingRecord ctermfg=170 guifg=#c678dd
 highlight VM ctermfg=39 guifg=#61afef 
