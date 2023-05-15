@@ -513,7 +513,6 @@ require('mason').setup({
 -- See :help mason-lspconfig-settings
 require('mason-lspconfig').setup({
     ensure_installed = {
-        'sumneko_lua',
         'denols',
         'tsserver',
         'svelte',
@@ -539,17 +538,6 @@ require("mason-lspconfig").setup_handlers({
         lspconfig.tsserver.setup({
             root_dir = lspconfig.util.root_pattern("package.json"),
             single_file_support = false
-        })
-    end,
-    ["sumneko_lua"] = function()
-        lspconfig.sumneko_lua.setup({
-            settings = {
-                Lua = {
-                    diagnostics = {
-                        globals = { 'vim' }
-                    }
-                }
-            }
         })
     end,
 })
