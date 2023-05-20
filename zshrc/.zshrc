@@ -38,4 +38,6 @@ setopt appendhistory
 setopt INC_APPEND_HISTORY  
 setopt SHARE_HISTORY
 
+autoload -Uz compinit && compinit
+
 eval "$(starship init zsh)"
