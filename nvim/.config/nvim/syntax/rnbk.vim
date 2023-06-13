@@ -30,7 +30,7 @@ highlight Header ctermfg=204 guifg=#e06c75
 highlight Epicadm ctermfg=114 guifg=#98c379
 highlight Root ctermfg=204 guifg=#e06c75
 highlight HostingRecord ctermfg=170 guifg=#c678dd
-highlight VM ctermfg=39 guifg=#61afef 
+highlight VM ctermfg=39 guifg=#61afef
 highlight Value ctermfg=173 guifg=#d19a66
 " highlight def link Func Identifier
 " highlight def link Routine Constant
