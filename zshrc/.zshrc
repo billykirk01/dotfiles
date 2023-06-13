@@ -1,14 +1,12 @@
-alias ll='exa -lr'
-alias la='exa -lra'
-alias lt='exa -Tr'
+alias ls='ls --color=auto'
+alias la='ls -ltrha --color=auto'
+alias ll='ls -ltrh --color=auto'
+alias vim="nvim"
+alias view='vim -R'
+alias remote-desktop='wlfreerdp -grab-keyboard /u:bkirk /gfx /sound /microphone /size:2560x1440 /v:epic95305.dhcp.epic.com'
+alias r="ranger"
 
-alias ga='git add .'
-alias gc='git commit -m'
-alias gp='git push origin master'
-
-alias vim='nvim'
-alias top='htop'
-alias fd='fdfind'
+alias prune="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 
 . ~/.cargo/env
 
@@ -22,8 +20,7 @@ export PATH="$DENO_INSTALL/bin:$PATH"
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:/home/billy/.local/bin
 
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/.zsh/zsh-vi-mode/zsh-vi-mode.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 precmd() {
     precmd() {
@@ -31,11 +28,18 @@ precmd() {
     }
 }
 
-HISTFILE=~/.zsh/zsh_history
+export EDITOR=nvim
+export VISUAL=nvim
+
+HISTFILE=~/.zsh_history
 HISTSIZE=500000
 SAVEHIST=500000
 setopt appendhistory
 setopt INC_APPEND_HISTORY  
 setopt SHARE_HISTORY
+
+autoload -Uz compinit promptinit
+compinit
+promptinit
 
 eval "$(starship init zsh)"
