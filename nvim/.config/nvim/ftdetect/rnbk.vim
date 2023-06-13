@@ -1,1 +1,1 @@
-au BufRead,BufNewFile *.rnbk		setfiletype rnbk
+au BufRead,BufNewFile *.rnbk            setfiletype rnbk
