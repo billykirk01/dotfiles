@@ -249,6 +249,7 @@ vim.o.termguicolors = true
 vim.keymap.set({ 'n', 'v' }, ';', '<Nop>', { silent = true })
 vim.keymap.set({ 'n', 'x' }, '<leader>y', '"+y')
 vim.keymap.set({ 'n', 'x' }, '<leader>p', '"+p')
+vim.keymap.set({ 'v' }, '<leader>gr', 'y:%s@<c-r>"@@g|\'\'<left><left><left><left><left>')
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -257,6 +258,7 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set('n', '<c-H>', '<c-w>h')
 vim.keymap.set('t', '<c-H>', '<c-\\><c-n><c-w>h') -- move from terminal back to editor window
 vim.keymap.set('n', '<c-L>', '<c-w>l')
+vim.keymap.set('n', '<leader>e', ':Ex<enter>')
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -282,7 +284,7 @@ require('toggleterm').setup({
     end
   end,
   open_mapping = '<C-g>',
-  direction = 'vertical',
+  direction = 'float',
   float_opts = {
     border = 'curved'
   },
@@ -314,8 +316,8 @@ require('telescope').setup {
 pcall(require('telescope').load_extension, 'fzf')
 
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader>sr', require('telescope.builtin').oldfiles, { desc = '[S]earch [R]ecently opened files' })
+vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = '[S]earch [B]uffers' })
 -- vim.keymap.set('n', '<leader>/', function()
 --   -- You can pass additional configuration to telescope to change theme, layout, etc.
 --   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -402,7 +404,7 @@ require('nvim-treesitter.configs').setup {
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- LSP settings.
@@ -428,7 +430,7 @@ local on_attach = function(_, bufnr)
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-  nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+  nmap('<leader>td', vim.lsp.buf.type_definition, '[T]ype [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
