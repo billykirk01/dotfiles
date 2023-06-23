@@ -2,6 +2,7 @@ alias ll='exa -lr'
 alias la='exa -lra'
 alias lt='exa -Tr'
 
+alias gs='git status'
 alias ga='git add .'
 alias gc='git commit -m'
 alias gp='git push origin master'
