@@ -1,7 +1,9 @@
 alias ls='ls --color=auto'
 alias la='ls -ltrha --color=auto'
 alias ll='ls -ltrh --color=auto'
+alias gc='git commit'
 alias vim="nvim"
+alias vi="nvim"
 alias view='vim -R'
 alias remote-desktop='wlfreerdp -grab-keyboard /u:bkirk /gfx /sound /microphone /size:2560x1440 /v:epic95305.dhcp.epic.com'
 alias r="ranger"
@@ -9,6 +11,7 @@ alias r="ranger"
 alias prune="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 
 . ~/.cargo/env
+export RUSTC_WRAPPER=/home/billy/.cargo/bin/sccache
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh"  ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
