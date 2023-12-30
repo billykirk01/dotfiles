@@ -11,7 +11,7 @@ alias r="ranger"
 alias prune="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 
 . ~/.cargo/env
-export RUSTC_WRAPPER=/home/billy/.cargo/bin/sccache
+export RUSTC_WRAPPER=/usr/bin/sccache
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh"  ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
