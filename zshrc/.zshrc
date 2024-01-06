@@ -24,6 +24,7 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:/home/billy/.local/bin
 
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
 precmd() {
     precmd() {
