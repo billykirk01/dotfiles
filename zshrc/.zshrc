@@ -4,7 +4,7 @@ alias ll='ls -ltrh --color=auto'
 alias gc='git commit'
 alias vim="nvim"
 alias vi="nvim"
-alias view='vim -R'
+alias view='nvim -R'
 alias remote-desktop='wlfreerdp -grab-keyboard /u:bkirk /gfx /sound /microphone /size:2560x1440 /v:epic95305.dhcp.epic.com'
 alias r="ranger"
 
