@@ -10,7 +10,7 @@
   background: #1e222a;
   color: #eeeeef;
   font-size: 14px;
-  font-family: "JetBrains Mono", "Font Awesome 6 Free";
+  font-family: "JetBrains Mono", "Font Awesome 6 Free Solid";
 }
 
 #workspaces button {
@@ -18,10 +18,12 @@
   color: #eeeeef;
 }
 
-/* Fix: active workspace doesn't show up */
-/* #workspaces button.focused { */
 #workspaces button.active {
   color: #fa5aa4;
+}
+
+#workspaces button.empty {
+  font-family: "JetBrains Mono", "Font Awesome 6 Free";
 }
 
 #custom-powermenu,
