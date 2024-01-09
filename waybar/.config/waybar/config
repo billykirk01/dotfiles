@@ -1,0 +1,97 @@
+{
+  "layer": "top",
+  "position": "top",
+  "margin-bottom": 0,
+  "modules-left": [
+    "clock",
+    "hyprland/workspaces",
+    "custom/updates",
+    "tray"
+  ],
+  "modules-center": [
+    "hyprland/window"
+  ],
+  "modules-right": [
+    "network",
+    "temperature",
+    "cpu",
+    "memory",
+    "wireplumber",
+    "custom/powermenu"
+  ],
+  "tray": {
+    "icon-size": 24,
+    "spacing": 10
+  },
+  "clock": {
+    "format": "{:%a %B %d %H:%M}",
+    "interval": 60
+  },
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "1": "󰲠",
+      "2": "󰲢",
+      "3": "󰲤",
+      "4": "󰲦",
+      "5": "󰲨",
+      "6": "󰲪",
+      "7": "󰲬",
+      "8": "󰲮",
+      "9": "󰲰",
+      "10": "󰿬",
+      "-99": "",
+      "active": "",
+      "default": ""
+    }
+  },
+  "custom/updates": {
+    "format": "<span color=\"#61afef\"></span> {}",
+    "tooltip": false,
+    "interval": 3600,
+    "exec": "exec $HOME/.config/waybar/checkupdate.sh"
+  },
+  "hyprland/window": {
+    "format": " {} ",
+    "separate-outputs": false
+  },
+  "network": {
+    "interface": "enp3s0",
+    "tooltip-format-ethernet": "{ifname} ",
+    "interval": 2,
+    "format": " {bandwidthDownBits}  {bandwidthUpBits}"
+  },
+  "temperature": {
+    "format": "{icon} {temperatureC}°C",
+    "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+    "critical-threshold": 80,
+    "format-icons": [
+      "",
+      "",
+      ""
+    ]
+  },
+  "cpu": {
+    "format": " {}%",
+    "tooltip": "false"
+  },
+  "memory": {
+    "format": " {}%",
+    "tooltip": "false"
+  },
+  "wireplumber": {
+    "format": "{icon} {volume}%",
+    "format-muted": " {volume}%",
+    "on-click": "helvum",
+    "format-icons": [
+      "",
+      "",
+      ""
+    ]
+  },
+  "custom/powermenu": {
+    "format": "",
+    "tooltip": false,
+    "on-click": "exec wlogout -p layer-shell"
+  }
+}
