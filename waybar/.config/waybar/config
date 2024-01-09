@@ -17,6 +17,7 @@
     "cpu",
     "memory",
     "wireplumber",
+    "bluetooth",
     "custom/powermenu"
   ],
   "tray": {
@@ -40,7 +41,8 @@
     "format": "<span color=\"#61afef\"></span> {}",
     "tooltip": false,
     "interval": 3600,
-    "exec": "exec $HOME/.config/waybar/checkupdate.sh"
+    "exec": "exec $HOME/.config/waybar/checkupdate.sh",
+    "on-click": "kitty checkupdates"
   },
   "hyprland/window": {
     "format": " {} ",
@@ -50,7 +52,8 @@
     "interface": "enp3s0",
     "tooltip-format-ethernet": "{ifname} ",
     "interval": 2,
-    "format": " {bandwidthDownBits}  {bandwidthUpBits}"
+    "format": " {bandwidthDownBits}  {bandwidthUpBits}",
+    "on-click": "kitty btop"
   },
   "temperature": {
     "format": "{icon} {temperatureC}°C",
@@ -64,21 +67,29 @@
   },
   "cpu": {
     "format": " {}%",
-    "tooltip": "false"
+    "on-click": "kitty btop"
   },
   "memory": {
-    "format": " {}%",
-    "tooltip": "false"
+    "format": " {percentage}% ~ {avail} GB Free",
+    "on-click": "kitty btop"
   },
   "wireplumber": {
     "format": "{icon} {volume}%",
     "format-muted": " {volume}%",
-    "on-click": "helvum",
+    "on-click": "kitty alsamixer",
     "format-icons": [
       "",
       "",
       ""
     ]
+  },
+  "bluetooth": {
+    "format": " {status}",
+    "format-disabled": "",
+    "format-connected": " {num_connections}",
+    "tooltip-format": "{controller_alias}\t{controller_address}",
+    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}"
   },
   "custom/powermenu": {
     "format": "",

@@ -16,6 +16,7 @@
 #workspaces button {
   padding: 0 5px;
   color: #eeeeef;
+  border: none;
 }
 
 #workspaces button.active {
@@ -35,6 +36,7 @@
 #window,
 #wireplumber,
 #custom-updates,
+#bluetooth,
 #network {
   padding: 4px 8px;
   background-color: #303643;
@@ -86,6 +88,10 @@
 #network {
   color: #c678dd;
   min-width: 200px;
+}
+
+#bluetooth {
+  color: #61afef;
 }
 
 #clock {
