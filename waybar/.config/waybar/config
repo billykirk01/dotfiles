@@ -5,8 +5,7 @@
   "modules-left": [
     "clock",
     "hyprland/workspaces",
-    "custom/updates",
-    "tray"
+    "custom/updates"
   ],
   "modules-center": [
     "hyprland/window"
