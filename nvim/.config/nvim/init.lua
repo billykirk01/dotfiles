@@ -798,7 +798,7 @@ require("lazy").setup({
 		"akinsho/toggleterm.nvim",
 		init = function()
 			require("toggleterm").setup({
-				open_mapping = [[<c-\>]],
+				open_mapping = [[<c-`>]],
 				start_in_insert = false,
 				-- direction = "float",
 			})
