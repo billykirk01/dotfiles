@@ -20,6 +20,9 @@ compinit
 promptinit
 _comp_options+=(globdots) #include hidden files
 
+# brew bundle
+export HOMEBREW_BUNDLE_FILE=$HOME/.config/brewfile/Brewfile
+
 # Homebrew on Linux
 if [[ $(uname) == "Linux" ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
