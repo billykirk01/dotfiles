@@ -90,4 +90,5 @@ alias gp="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git
 export RUSTC_WRAPPER=$(which sccache)
 
 # go
+export GOPATH=$HOME/src/go
 export PATH=$PATH:$(go env GOPATH)/bin
