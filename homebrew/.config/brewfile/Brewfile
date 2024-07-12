@@ -1,4 +1,5 @@
 tap "homebrew/bundle"
+brew "tmux"
 brew "bat"
 brew "deno"
 brew "eza"
