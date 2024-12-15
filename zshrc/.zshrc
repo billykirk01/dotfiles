@@ -89,12 +89,16 @@ alias gc='git commit'
 alias gp="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 
 # rust
-. ~/.cargo/env
-export RUSTC_WRAPPER=$(which sccache)
+if [[ $(command -v cargo) != "" ]]; then
+    . ~/.cargo/env
+    export RUSTC_WRAPPER=$(which sccache)
+fi
 
 # go
-export GOPATH=$HOME/src/go
-export PATH=$PATH:$(go env GOPATH)/bin
+if [[ $(command -v go) != "" ]]; then
+    export GOPATH=$HOME/src/go
+    export PATH=$PATH:$(go env GOPATH)/bin
+fi
 
 # nvm
 export NVM_DIR="$HOME/.nvm"
