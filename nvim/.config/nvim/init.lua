@@ -142,6 +142,8 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require("lazy").setup({
+	checker = { enabled = false },
+	--
 	-- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
 	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
 
@@ -578,7 +580,21 @@ require("lazy").setup({
 				"yamlfmt",
 				"fixjson",
 			})
-			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+			require("mason-tool-installer").setup({
+				ensure_installed = ensure_installed,
+
+				-- if set to true this will check each tool for updates. If updates
+				-- are available the tool will be updated. This setting does not
+				-- affect :MasonToolsUpdate or :MasonToolsInstall.
+				-- Default: false
+				auto_update = false,
+
+				-- automatically install / update on startup. If set to false nothing
+				-- will happen on startup. You can use :MasonToolsInstall or
+				-- :MasonToolsUpdate to install tools and check for updates.
+				-- Default: true
+				run_on_start = false,
+			})
 
 			require("mason-lspconfig").setup({
 				handlers = {
@@ -836,7 +852,7 @@ require("lazy").setup({
 				"vimdoc",
 			},
 			-- Autoinstall languages that are not installed
-			auto_install = true,
+			auto_install = false,
 			highlight = {
 				enable = true,
 				-- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
