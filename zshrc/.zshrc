@@ -42,10 +42,9 @@ fi
 
 # eza
 if [[ $(command -v eza) != "" ]]; then
-    alias ls='eza'
-    alias ll='eza -l'
-    alias la='eza -la'
-    alias lt='eza --tree --level 2'
+    alias ll='eza -l --color=never'
+    alias la='eza -la --color=never'
+    alias lt='eza --tree --level 2 --color=never'
 fi
 
 # fzf

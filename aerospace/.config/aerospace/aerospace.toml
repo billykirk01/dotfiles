@@ -93,7 +93,7 @@ outer.right =      8
 # end tell'
 # '''
 #cmd-enter = 'exec-and-forget open -n /System/Applications/Utilities/Terminal.app'
-cmd-enter = 'exec-and-forget open -n /Applications/kitty.app'
+cmd-enter = 'exec-and-forget open -n /Applications/iTerm.app'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#layout
 cmd-slash = 'layout tiles horizontal vertical'
