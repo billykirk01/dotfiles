@@ -81,6 +81,7 @@ if [[ $(command -v nvim) != "" ]]; then
 
     export EDITOR=nvim
     export VISUAL=nvim
+    export MANPAGER="nvim +Man!"
 fi
 
 # git
