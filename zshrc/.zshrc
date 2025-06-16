@@ -42,9 +42,9 @@ fi
 
 # eza
 if [[ $(command -v eza) != "" ]]; then
-    alias ll='eza -l --color=never'
-    alias la='eza -la --color=never'
-    alias lt='eza --tree --level 2 --color=never'
+    alias ll='eza -l'
+    alias la='eza -la'
+    alias lt='eza --tree --level 2'
 fi
 
 # fzf
@@ -95,8 +95,9 @@ if [[ $(command -v cargo) != "" ]]; then
 fi
 
 # go
+export PATH=$PATH:/usr/local/go/bin
 if [[ $(command -v go) != "" ]]; then
-    export GOPATH=$HOME/src/go
+    export GOPATH=$HOME/development/go/
     export PATH=$PATH:$(go env GOPATH)/bin
 fi
 
