@@ -1,4 +1,5 @@
--- Set <space> as the leader key See `:help mapleader`
+-- Set <space> as the leader key
+-- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
@@ -644,8 +645,7 @@ require("lazy").setup({
 			})
 			require("mason-tool-installer").setup({
 				ensure_installed = ensure_installed,
-				auto_update = false,
-				run_on_start = false,
+				-- run_on_start = false, -- set this in an airgapped enviornment
 			})
 
 			require("mason-lspconfig").setup({
@@ -811,19 +811,10 @@ require("lazy").setup({
 		--
 		-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
 		"navarasu/onedark.nvim",
-		priority = 1000,
+		priority = 1000, -- Make sure to load this before all the other start plugins.
 		config = function()
 			require("onedark").setup({ transparent = true })
 			require("onedark").load()
-		end,
-	},
-
-	-- Statusline
-	{
-		"nvim-lualine/lualine.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			require("lualine").setup({})
 		end,
 	},
 
@@ -858,6 +849,21 @@ require("lazy").setup({
 			-- - sd'   - [S]urround [D]elete [']quotes
 			-- - sr)'  - [S]urround [R]eplace [)] [']
 			require("mini.surround").setup()
+
+			-- Simple and easy statusline.
+			--  You could remove this setup call if you don't like it,
+			--  and try some other statusline plugin
+			local statusline = require("mini.statusline")
+			-- set use_icons to true if you have a Nerd Font
+			statusline.setup({ use_icons = vim.g.have_nerd_font })
+
+			-- You can configure sections in the statusline by overriding their
+			-- default behavior. For example, here we set the section for
+			-- cursor location to LINE:COLUMN
+			---@diagnostic disable-next-line: duplicate-set-field
+			statusline.section_location = function()
+				return "%2l:%-2v"
+			end
 
 			-- ... and there is more!
 			--  Check out: https://github.com/echasnovski/mini.nvim
