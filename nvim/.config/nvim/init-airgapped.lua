@@ -137,13 +137,13 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-	if vim.v.shell_error ~= 0 then
-		error("Error cloning lazy.nvim:\n" .. out)
-	end
-end -- comment out this if block in an airgapped environment
+-- if not (vim.uv or vim.loop).fs_stat(lazypath) then
+-- 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+-- 	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+-- 	if vim.v.shell_error ~= 0 then
+-- 		error("Error cloning lazy.nvim:\n" .. out)
+-- 	end
+-- end -- comment out this if block in an airgapped environment
 
 ---@type vim.Option
 local rtp = vim.opt.rtp
@@ -645,7 +645,7 @@ require("lazy").setup({
 			})
 			require("mason-tool-installer").setup({
 				ensure_installed = ensure_installed,
-				run_on_start = true, -- set this to false in an airgapped enviornment
+				run_on_start = false, -- set this to false in an airgapped enviornment
 			})
 
 			require("mason-lspconfig").setup({
@@ -871,7 +871,7 @@ require("lazy").setup({
 	},
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate", -- comment this out in an airgapped environment
+		-- build = ":TSUpdate", -- comment this out in an airgapped environment
 		main = "nvim-treesitter.configs", -- Sets main module to use for opts
 		-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 		opts = {
@@ -889,7 +889,7 @@ require("lazy").setup({
 				"vimdoc",
 			},
 			-- Autoinstall languages that are not installed
-			auto_install = true, --set this to false in an airgapped environment
+			auto_install = false, --set this to false in an airgapped environment
 			highlight = {
 				enable = true,
 				-- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
@@ -934,9 +934,9 @@ require("lazy").setup({
 	-- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
 	-- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
-	-- install = { missing = false }, -- uncomment this line in an airgapped environment
-	-- checker = { enabled = false }, -- uncomment this line in an airgapped environment
-	-- change_detection = { enabled = false }, -- uncomment this line in an airgapped environment
+	install = { missing = false }, -- uncomment this line in an airgapped environment
+	checker = { enabled = false }, -- uncomment this line in an airgapped environment
+	change_detection = { enabled = false }, -- uncomment this line in an airgapped environment
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
 		-- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
