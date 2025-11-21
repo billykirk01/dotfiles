@@ -4,6 +4,9 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- Air-gapped toggle (set to true on a network-restricted machine)
+local AIRGAPPED = false
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
@@ -16,7 +19,7 @@ vim.g.have_nerd_font = false
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = "a"
@@ -34,7 +37,7 @@ end)
 
 -- Enable break indent
 vim.o.breakindent = true
-vim.o.tabstop = 4
+vim.o.tabstop = 2
 
 -- Save undo history
 vim.o.undofile = true
@@ -65,7 +68,8 @@ vim.o.splitbelow = true
 --   See `:help lua-options`
 --   and `:help lua-options-guide`
 vim.o.list = true
-vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+-- vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+vim.opt.listchars = { tab = "  ", trail = "·", nbsp = "␣" }
 
 -- Preview substitutions live, as you type!
 vim.o.inccommand = "split"
@@ -98,6 +102,20 @@ vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagn
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
+-- Always drop into insert when opening or re-focusing a terminal
+vim.api.nvim_create_autocmd({ "TermOpen", "BufEnter", "WinEnter" }, {
+	pattern = "term://*",
+	callback = function()
+		if vim.bo.buftype == "terminal" and vim.api.nvim_get_mode().mode ~= "i" then
+			vim.schedule(function()
+				if vim.api.nvim_get_current_buf() == vim.fn.bufnr() then
+					vim.cmd("startinsert")
+				end
+			end)
+		end
+	end,
+})
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -137,13 +155,13 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
+if not AIRGAPPED and not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
 	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 	if vim.v.shell_error ~= 0 then
 		error("Error cloning lazy.nvim:\n" .. out)
 	end
-end -- comment out this if block in an airgapped environment
+end
 
 ---@type vim.Option
 local rtp = vim.opt.rtp
@@ -162,8 +180,9 @@ rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require("lazy").setup({
 	-- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-	"NMAC427/guess-indent.nvim", -- Detect tabstop and shiftwidth automatically
-
+	{
+		"NMAC427/guess-indent.nvim", -- Detect tabstop and shiftwidth automatically
+	},
 	-- NOTE: Plugins can also be added by using a table,
 	-- with the first argument being the link and the following
 	-- keys can be used to configure plugin behavior/loading/etc.
@@ -645,7 +664,7 @@ require("lazy").setup({
 			})
 			require("mason-tool-installer").setup({
 				ensure_installed = ensure_installed,
-				run_on_start = true, -- set this to false in an airgapped enviornment
+				run_on_start = not AIRGAPPED,
 			})
 
 			require("mason-lspconfig").setup({
@@ -731,7 +750,6 @@ require("lazy").setup({
 					-- {
 					--   'rafamadriz/friendly-snippets',
 					--   config = function()
-					--     require('luasnip.loaders.from_vscode').lazy_load()
 					--   end,
 					-- },
 				},
@@ -824,6 +842,55 @@ require("lazy").setup({
 		opts = { smear_to_cmd = false },
 	},
 
+	-- Smart Jumping
+	{
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		---@type Flash.Config
+		opts = {},
+		keys = {
+			{
+				"s",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").jump()
+				end,
+				desc = "Flash",
+			},
+			{
+				"S",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").treesitter()
+				end,
+				desc = "Flash Treesitter",
+			},
+			{
+				"r",
+				mode = "o",
+				function()
+					require("flash").remote()
+				end,
+				desc = "Remote Flash",
+			},
+			{
+				"R",
+				mode = { "o", "x" },
+				function()
+					require("flash").treesitter_search()
+				end,
+				desc = "Treesitter Search",
+			},
+			{
+				"<c-s>",
+				mode = { "c" },
+				function()
+					require("flash").toggle()
+				end,
+				desc = "Toggle Flash Search",
+			},
+		},
+	},
 	-- Highlight todo, notes, etc in comments
 	{
 		"folke/todo-comments.nvim",
@@ -834,6 +901,10 @@ require("lazy").setup({
 
 	{ -- Collection of various small independent plugins/modules
 		"echasnovski/mini.nvim",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-treesitter/nvim-treesitter-textobjects",
+		},
 		config = function()
 			-- Better Around/Inside textobjects
 			--
@@ -841,7 +912,14 @@ require("lazy").setup({
 			--  - va)  - [V]isually select [A]round [)]paren
 			--  - yinq - [Y]ank [I]nside [N]ext [Q]uote
 			--  - ci'  - [C]hange [I]nside [']quote
-			require("mini.ai").setup({ n_lines = 500 })
+			require("mini.ai").setup({
+				custom_textobjects = {
+					f = require("mini.ai").gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }),
+					c = require("mini.ai").gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),
+					l = require("mini.ai").gen_spec.treesitter({ a = "@loop.outer", i = "@loop.inner" }),
+					q = require("mini.ai").gen_spec.treesitter({ a = "@conditional.outer", i = "@conditional.inner" }),
+				},
+			})
 
 			-- Add/delete/replace surroundings (brackets, quotes, etc.)
 			--
@@ -871,7 +949,7 @@ require("lazy").setup({
 	},
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate", -- comment this out in an airgapped environment
+		build = AIRGAPPED and nil or ":TSUpdate",
 		main = "nvim-treesitter.configs", -- Sets main module to use for opts
 		-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 		opts = {
@@ -887,9 +965,10 @@ require("lazy").setup({
 				"query",
 				"vim",
 				"vimdoc",
+				"go",
 			},
 			-- Autoinstall languages that are not installed
-			auto_install = true, --set this to false in an airgapped environment
+			auto_install = not AIRGAPPED,
 			highlight = {
 				enable = true,
 				-- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
@@ -934,9 +1013,9 @@ require("lazy").setup({
 	-- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
 	-- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
-	-- install = { missing = false }, -- uncomment this line in an airgapped environment
-	-- checker = { enabled = false }, -- uncomment this line in an airgapped environment
-	-- change_detection = { enabled = false }, -- uncomment this line in an airgapped environment
+	install = { missing = not AIRGAPPED },
+	checker = { enabled = not AIRGAPPED },
+	change_detection = { enabled = not AIRGAPPED },
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
 		-- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table

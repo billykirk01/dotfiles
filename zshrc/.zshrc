@@ -47,6 +47,11 @@ if [[ $(command -v eza) != "" ]]; then
     alias lt='eza --tree --level 2'
 fi
 
+# bat
+if [[ $(command -v bat) != "" ]]; then
+    alias cat='bat -pP'
+fi
+
 # fzf
 if [[ $(command -v fzf) != "" ]]; then
     # need to source these after the vi-mode plugin to avoid conflicts
