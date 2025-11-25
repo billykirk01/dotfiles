@@ -58,6 +58,7 @@ vim.o.timeoutlen = 300
 -- Configure how new splits should be opened
 vim.o.splitright = true
 vim.o.splitbelow = true
+vim.o.splitkeep = "screen"
 
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
@@ -103,8 +104,10 @@ vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
--- Always drop into insert when opening or re-focusing a terminal
+-- Always drop into insert mode when entering a terminal
+local term_insert = vim.api.nvim_create_augroup("TerminalAutoInsert", { clear = true })
 vim.api.nvim_create_autocmd({ "TermOpen", "BufEnter", "WinEnter" }, {
+	group = term_insert,
 	pattern = "term://*",
 	callback = function()
 		if vim.bo.buftype == "terminal" and vim.api.nvim_get_mode().mode ~= "i" then
@@ -112,6 +115,23 @@ vim.api.nvim_create_autocmd({ "TermOpen", "BufEnter", "WinEnter" }, {
 				if vim.api.nvim_get_current_buf() == vim.fn.bufnr() then
 					vim.cmd("startinsert")
 				end
+			end)
+		end
+	end,
+})
+
+-- Force line numbers in terminal windows
+local term_numbers = vim.api.nvim_create_augroup("TerminalNumbers", { clear = true })
+vim.api.nvim_create_autocmd({ "TermOpen", "TermEnter", "BufEnter", "WinEnter" }, {
+	group = term_numbers,
+	pattern = "term://*",
+	callback = function()
+		if vim.bo.buftype == "terminal" then
+			-- schedule to run after any other handlers that might toggle them
+			vim.schedule(function()
+				vim.wo.number = true
+				vim.wo.relativenumber = true -- set to false if you only want absolute numbers
+				vim.wo.numberwidth = 4
 			end)
 		end
 	end,
@@ -218,6 +238,18 @@ require("lazy").setup({
 		},
 	},
 
+	{
+		{
+			"akinsho/toggleterm.nvim",
+			version = "*",
+			opts = {
+				size = 20,
+				open_mapping = [[<c-\>]],
+				hide_numbers = false,
+			},
+		},
+	},
+	--
 	-- NOTE: Plugins can also be configured to run Lua code when they are loaded.
 	--
 	-- This is often very useful to both group configuration, as well as handle
@@ -369,7 +401,7 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
 			vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
 			vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-			vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
+			vim.keymap.set("n", "<leader>sb", builtin.buffers, { desc = "[ ] Find existing buffers" })
 
 			-- Slightly advanced example of overriding default behavior and theme
 			vim.keymap.set("n", "<leader>/", function()
