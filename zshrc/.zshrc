@@ -90,6 +90,7 @@ if [[ $(command -v nvim) != "" ]]; then
 fi
 
 # git
+alias gs='git status'
 alias gc='git commit'
 alias gp="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 

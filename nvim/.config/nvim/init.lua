@@ -8,17 +8,13 @@ vim.g.maplocalleader = " "
 local AIRGAPPED = false
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
--- See `:help vim.o`
--- NOTE: You can change these options as you wish!
---  For more options, you can see `:help option-list`
+-- See `:help vim.o` and `:help option-list`
 
 -- Make line numbers default
 vim.o.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
 vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
@@ -32,7 +28,14 @@ vim.o.showmode = false
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.schedule(function()
-	vim.o.clipboard = "unnamedplus"
+	if
+		vim.fn.executable("xclip") == 1
+		or vim.fn.executable("xsel") == 1
+		or vim.fn.executable("wl-copy") == 1
+		or vim.fn.has("mac") == 1
+	then
+		vim.opt.clipboard = "unnamedplus"
+	end
 end)
 
 -- Enable break indent
@@ -88,87 +91,164 @@ vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save file" })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+vim.keymap.set("n", "<Esc>", function()
+	-- If we're in the flash prompt window, don't interfere at all
+	if vim.bo.filetype == "flash_prompt" then
+		return "<Esc>"
+	end
+
+	-- If search highlight is currently on, clear it
+	if vim.v.hlsearch == 1 then
+		return "<cmd>nohlsearch<CR>"
+	end
+
+	-- Otherwise, behave like a normal <Esc>
+	return "<Esc>"
+end, { expr = true, silent = true })
 
 -- Diagnostic keymaps
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+vim.keymap.set("n", "<leader>d", function()
+	-- Get all diagnostics from all buffers
+	local diags = vim.diagnostic.get()
+	if vim.tbl_isempty(diags) then
+		vim.notify("No diagnostics found", vim.log.levels.INFO)
+		return
+	end
+	-- If there's only one diagnostic, jump straight to it
+	if #diags == 1 then
+		local d = diags[1]
+		vim.api.nvim_set_current_buf(d.bufnr)
+		vim.api.nvim_win_set_cursor(0, { d.lnum + 1, d.col })
+		vim.cmd("normal! zz") -- center screen (optional)
+		return
+	end
+	-- Otherwise populate quickfix list
+	vim.diagnostic.setqflist({ open = false })
+	-- Open quickfix and jump to first entry
+	vim.cmd("copen")
+	vim.cmd("cfirst")
+end, { desc = "Open diagnostics (smart quickfix)" })
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
+local function is_qf_open()
+	local qf_info = vim.fn.getqflist({ winid = 1 })
+	return qf_info.winid ~= 0
+end
+
+-- Toggle Quickfix List
+vim.keymap.set("n", "<leader>q", function()
+	if is_qf_open() then
+		vim.cmd("cclose")
+	else
+		vim.cmd("copen")
+	end
+end, { desc = "Toggle [Q]uickfix List" })
+
+-- Navigate to previous diagnostic with <C-n>
+vim.keymap.set("n", "<C-n>", function()
+	if is_qf_open() then
+		pcall(vim.cmd.cnext)
+	end
+end, { silent = true, desc = "Go to next diagnostic in Quickfix List" })
+
+-- Navigate to next diagnostic with <C-n>
+vim.keymap.set("n", "<C-p>", function()
+	if is_qf_open() then
+		pcall(vim.cmd.cprev)
+	end
+end, { silent = true, desc = "Go to previous diagnostic in Quickfix List" })
+
+-- Toggle Oil
+vim.keymap.set("n", "<leader>o", function()
+	if vim.bo.filetype == "oil" then
+		vim.cmd("bd") -- close the Oil buffer
+	else
+		require("oil").open()
+	end
+end, { desc = "Toggle [O]il" })
+
+-- Open Neovim Config
+vim.keymap.set("n", "<leader>n", function()
+	vim.cmd.edit(vim.fn.stdpath("config") .. "/init.lua")
+end, { desc = "Open Neovim init.lua" })
+
+-- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier than <C-\><C-n>
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
--- Always drop into insert mode when entering a terminal
-local term_insert = vim.api.nvim_create_augroup("TerminalAutoInsert", { clear = true })
-vim.api.nvim_create_autocmd({ "TermOpen", "BufEnter", "WinEnter" }, {
-	group = term_insert,
-	pattern = "term://*",
-	callback = function()
-		if vim.bo.buftype == "terminal" and vim.api.nvim_get_mode().mode ~= "i" then
-			vim.schedule(function()
-				if vim.api.nvim_get_current_buf() == vim.fn.bufnr() then
-					vim.cmd("startinsert")
-				end
-			end)
-		end
-	end,
-})
-
--- Force line numbers in terminal windows
-local term_numbers = vim.api.nvim_create_augroup("TerminalNumbers", { clear = true })
-vim.api.nvim_create_autocmd({ "TermOpen", "TermEnter", "BufEnter", "WinEnter" }, {
-	group = term_numbers,
-	pattern = "term://*",
-	callback = function()
-		if vim.bo.buftype == "terminal" then
-			-- schedule to run after any other handlers that might toggle them
-			vim.schedule(function()
-				vim.wo.number = true
-				vim.wo.relativenumber = true -- set to false if you only want absolute numbers
-				vim.wo.numberwidth = 4
-			end)
-		end
-	end,
-})
-
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+-- Disable arrow keys in normal mode
+vim.keymap.set("n", "<left>", '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set("n", "<right>", '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set("n", "<up>", '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set("n", "<down>", '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
---
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
--- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
--- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
--- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
--- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
--- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
-
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
-
 -- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
 	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
 	callback = function()
 		vim.hl.on_yank()
+		-- Only do OSC52 copy if clipboard option isn't set
+		local cb = vim.opt.clipboard:get()
+		local clipboard_enabled = vim.tbl_contains(cb, "unnamed") or vim.tbl_contains(cb, "unnamedplus")
+
+		if not clipboard_enabled then
+			require("vim.ui.clipboard.osc52").copy("+")(vim.v.event.regcontents)
+		end
+	end,
+})
+
+local term_buf = nil
+local term_win = nil
+local function toggle_terminal()
+	-- if already open then close it
+	if term_win and vim.api.nvim_win_is_valid(term_win) then
+		vim.api.nvim_win_close(term_win, true)
+		term_win = nil
+		return
+	end
+
+	-- create the split
+	vim.cmd("botright 20split")
+
+	-- This is now the new bottom window
+	term_win = vim.api.nvim_get_current_win()
+
+	-- create or re-use the terminal buffer
+	if term_buf and vim.api.nvim_buf_is_valid(term_buf) then
+		vim.api.nvim_win_set_buf(term_win, term_buf)
+	else
+		vim.cmd("terminal")
+		term_buf = vim.api.nvim_get_current_buf()
+	end
+end
+
+vim.keymap.set("n", "<C-\\>", toggle_terminal)
+vim.keymap.set("t", "<C-\\>", toggle_terminal)
+
+vim.api.nvim_create_autocmd({ "TermOpen", "TermEnter", "BufEnter", "WinEnter" }, {
+	desc = "Force line numbers in terminal buffers and start in insert mode",
+	group = vim.api.nvim_create_augroup("terminal-settings", { clear = true }),
+	callback = function()
+		if vim.bo.buftype == "terminal" then
+			vim.wo.number = true
+			vim.wo.relativenumber = true
+			vim.wo.numberwidth = 4
+			vim.cmd("startinsert")
+		end
 	end,
 })
 
@@ -192,16 +272,16 @@ rtp:prepend(lazypath)
 --  To check the current status of your plugins, run
 --    :Lazy
 --
---  You can press `?` in this menu for help. Use `:q` to close the window
---
 --  To update plugins you can run
 --    :Lazy update
---
--- NOTE: Here is where you install your plugins.
 require("lazy").setup({
 	-- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-	{
-		"NMAC427/guess-indent.nvim", -- Detect tabstop and shiftwidth automatically
+	{ -- Detect tabstop and shiftwidth automatically
+		"NMAC427/guess-indent.nvim",
+	},
+
+	{ -- AI Code Completion
+		"github/copilot.vim",
 	},
 	-- NOTE: Plugins can also be added by using a table,
 	-- with the first argument being the link and the following
@@ -210,17 +290,6 @@ require("lazy").setup({
 	-- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
 	--
 
-	-- Alternatively, use `config = function() ... end` for full control over the configuration.
-	-- If you prefer to call `setup` explicitly, use:
-	--    {
-	--        'lewis6991/gitsigns.nvim',
-	--        config = function()
-	--            require('gitsigns').setup({
-	--                -- Your gitsigns configuration here
-	--            })
-	--        end,
-	--    }
-	--
 	-- Here is a more advanced example where we pass configuration
 	-- options to `gitsigns.nvim`.
 	--
@@ -238,17 +307,16 @@ require("lazy").setup({
 		},
 	},
 
-	{
-		{
-			"akinsho/toggleterm.nvim",
-			version = "*",
-			opts = {
-				size = 20,
-				open_mapping = [[<c-\>]],
-				hide_numbers = false,
-			},
-		},
-	},
+	-- Alternatively, use `config = function() ... end` for full control over the configuration.
+	--    {
+	--        'lewis6991/gitsigns.nvim',
+	--        config = function()
+	--            require('gitsigns').setup({
+	--                -- Your gitsigns configuration here
+	--            })
+	--        end,
+	--    }
+	--
 	--
 	-- NOTE: Plugins can also be configured to run Lua code when they are loaded.
 	--
@@ -306,13 +374,6 @@ require("lazy").setup({
 					F11 = "<F11>",
 					F12 = "<F12>",
 				},
-			},
-
-			-- Document existing key chains
-			spec = {
-				{ "<leader>s", group = "[S]earch" },
-				{ "<leader>t", group = "[T]oggle" },
-				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
 			},
 		},
 	},
@@ -373,12 +434,21 @@ require("lazy").setup({
 				-- You can put your default mappings / updates / etc. in here
 				--  All the info you're looking for is in `:help telescope.setup()`
 				--
-				-- defaults = {
-				--   mappings = {
-				--     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-				--   },
-				-- },
-				-- pickers = {}
+				defaults = {
+					sorting_strategy = "ascending", -- or "descending"
+					layout_strategy = "bottom_pane",
+					layout_config = {
+						prompt_position = "top",
+					},
+					-- mappings = {
+					--   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+					-- },
+				},
+				pickers = {
+					git_branches = {
+						show_remote_tracking_branches = false,
+					},
+				},
 				extensions = {
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown(),
@@ -392,39 +462,31 @@ require("lazy").setup({
 
 			-- See `:help telescope.builtin`
 			local builtin = require("telescope.builtin")
-			vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
-			vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
-			vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "[S]earch [F]iles" })
-			vim.keymap.set("n", "<leader>ss", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
+			vim.keymap.set("n", "<leader>h", builtin.help_tags, { desc = "[S]earch [H]elp" })
+			vim.keymap.set("n", "<leader>k", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
+			vim.keymap.set("n", "<leader>f", builtin.find_files, { desc = "[S]earch [F]iles" })
+			vim.keymap.set("n", "<leader>st", builtin.builtin, { desc = "[S]earch [T]elescope" })
 			vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
-			vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "[S]earch by [G]rep" })
-			vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
-			vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
-			vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-			vim.keymap.set("n", "<leader>sb", builtin.buffers, { desc = "[ ] Find existing buffers" })
-
-			-- Slightly advanced example of overriding default behavior and theme
-			vim.keymap.set("n", "<leader>/", function()
-				-- You can pass additional configuration to Telescope to change the theme, layout, etc.
-				builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-					winblend = 10,
-					previewer = false,
-				}))
-			end, { desc = "[/] Fuzzily search in current buffer" })
+			vim.keymap.set("n", "<leader>r", builtin.oldfiles, { desc = "[S]earch [R]ecent Files" })
+			vim.keymap.set("n", "<leader>b", builtin.buffers, { desc = "Find existing [B]uffers" })
 
 			-- It's also possible to pass additional configuration options.
 			--  See `:help telescope.builtin.live_grep()` for information about particular keys
-			vim.keymap.set("n", "<leader>s/", function()
+			vim.keymap.set("n", "<leader>/", function()
 				builtin.live_grep({
 					grep_open_files = true,
-					prompt_title = "Live Grep in Open Files",
+					prompt_title = "Live Grep",
 				})
-			end, { desc = "[S]earch [/] in Open Files" })
+			end, { desc = "Grep [/] in Open Files" })
 
-			-- Shortcut for searching your Neovim configuration files
-			vim.keymap.set("n", "<leader>sn", function()
-				builtin.find_files({ cwd = vim.fn.stdpath("config") })
-			end, { desc = "[S]earch [N]eovim files" })
+			vim.keymap.set("n", "<leader>w/", function()
+				builtin.live_grep({
+					prompt_title = "Live Grep",
+				})
+			end, { desc = "Grep [/] in Workspace" })
+
+			vim.keymap.set("n", "<leader>gc", builtin.git_commits, { desc = "[G]it [C]commits" })
+			vim.keymap.set("n", "<leader>gb", builtin.git_branches, { desc = "[G]it [B]ranches" })
 		end,
 	},
 
@@ -441,8 +503,8 @@ require("lazy").setup({
 			},
 		},
 	},
-	{
-		-- Main LSP Configuration
+
+	{ -- Main LSP Configuration
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			-- Automatically install LSPs and related tools to stdpath for Neovim
@@ -518,25 +580,30 @@ require("lazy").setup({
 
 					-- Jump to the definition of the word under your cursor.
 					--  This is where a variable was first declared, or where a function is defined, etc.
-					--  To jump back, press <C-t>.
 					map("grd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-
-					-- WARN: This is not Goto Definition, this is Goto Declaration.
-					--  For example, in C this would take you to the header.
-					map("grD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-
-					-- Fuzzy find all the symbols in your current document.
-					--  Symbols are things like variables, functions, types, etc.
-					map("gO", require("telescope.builtin").lsp_document_symbols, "Open Document Symbols")
-
-					-- Fuzzy find all the symbols in your current workspace.
-					--  Similar to document symbols, except searches over your entire project.
-					map("gW", require("telescope.builtin").lsp_dynamic_workspace_symbols, "Open Workspace Symbols")
 
 					-- Jump to the type of the word under your cursor.
 					--  Useful when you're not sure what type a variable is and you want to see
 					--  the definition of its *type*, not where it was *defined*.
 					map("grt", require("telescope.builtin").lsp_type_definitions, "[G]oto [T]ype Definition")
+
+					-- Jump to the declaration of the word under your cursor.
+					map("grD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+
+					-- Fuzzy find all the symbols in your current document.
+					--  Symbols are things like variables, functions, types, etc.
+					map("<leader>s", require("telescope.builtin").lsp_document_symbols, "Document [S]ymbols")
+
+					-- Fuzzy find all the symbols in your current workspace.
+					--  Similar to document symbols, except searches over your entire project.
+					map(
+						"<leader>ws",
+						require("telescope.builtin").lsp_dynamic_workspace_symbols,
+						"[W]orkspace [S]ymbols"
+					)
+
+					-- Show diagnostics
+					map("<leader>wd", require("telescope.builtin").diagnostics, "[W]orkspace [D]iagnostics")
 
 					-- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
 					---@param client vim.lsp.Client
@@ -551,47 +618,11 @@ require("lazy").setup({
 						end
 					end
 
-					-- The following two autocommands are used to highlight references of the
-					-- word under your cursor when your cursor rests there for a little while.
-					--    See `:help CursorHold` for information about when this is executed
-					--
-					-- When you move your cursor, the highlights will be cleared (the second autocommand).
-					local client = vim.lsp.get_client_by_id(event.data.client_id)
-					if
-						client
-						and client_supports_method(
-							client,
-							vim.lsp.protocol.Methods.textDocument_documentHighlight,
-							event.buf
-						)
-					then
-						local highlight_augroup =
-							vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
-						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-							buffer = event.buf,
-							group = highlight_augroup,
-							callback = vim.lsp.buf.document_highlight,
-						})
-
-						vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-							buffer = event.buf,
-							group = highlight_augroup,
-							callback = vim.lsp.buf.clear_references,
-						})
-
-						vim.api.nvim_create_autocmd("LspDetach", {
-							group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
-							callback = function(event2)
-								vim.lsp.buf.clear_references()
-								vim.api.nvim_clear_autocmds({ group = "kickstart-lsp-highlight", buffer = event2.buf })
-							end,
-						})
-					end
-
 					-- The following code creates a keymap to toggle inlay hints in your
 					-- code, if the language server you are using supports them
 					--
 					-- This may be unwanted, since they displace some of your code
+					local client = vim.lsp.get_client_by_id(event.data.client_id)
 					if
 						client
 						and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf)
@@ -693,6 +724,7 @@ require("lazy").setup({
 			local ensure_installed = vim.tbl_keys(servers or {})
 			vim.list_extend(ensure_installed, {
 				"stylua", -- Used to format Lua code
+				"goimports",
 			})
 			require("mason-tool-installer").setup({
 				ensure_installed = ensure_installed,
@@ -722,7 +754,7 @@ require("lazy").setup({
 		cmd = { "ConformInfo" },
 		keys = {
 			{
-				"<leader>f",
+				"<leader>a",
 				function()
 					require("conform").format({ async = true, lsp_format = "fallback" })
 				end,
@@ -748,6 +780,7 @@ require("lazy").setup({
 			end,
 			formatters_by_ft = {
 				lua = { "stylua" },
+				go = { "goimports" },
 				-- Conform can also run multiple formatters sequentially
 				-- python = { "isort", "black" },
 				--
@@ -762,8 +795,7 @@ require("lazy").setup({
 		event = "VimEnter",
 		version = "1.*",
 		dependencies = {
-			-- Snippet Engine
-			{
+			{ -- Snippet Engine
 				"L3MON4D3/LuaSnip",
 				version = "2.*",
 				build = (function()
@@ -855,10 +887,7 @@ require("lazy").setup({
 		},
 	},
 
-	{ -- You can easily change to a different colorscheme.
-		-- Change the name of the colorscheme plugin below, and then
-		-- change the command in the config to whatever the name of that colorscheme is.
-		--
+	{ -- Colorscheme
 		-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
 		"navarasu/onedark.nvim",
 		priority = 1000, -- Make sure to load this before all the other start plugins.
@@ -868,18 +897,22 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Cursor smear
-	{
+	{ -- Cursor smear
 		"sphamba/smear-cursor.nvim",
 		opts = { smear_to_cmd = false },
 	},
 
-	-- Smart Jumping
-	{
+	{ -- Smart Jumping
 		"folke/flash.nvim",
 		event = "VeryLazy",
 		---@type Flash.Config
-		opts = {},
+		opts = {
+			modes = {
+				search = {
+					enabled = true,
+				},
+			},
+		},
 		keys = {
 			{
 				"s",
@@ -923,8 +956,8 @@ require("lazy").setup({
 			},
 		},
 	},
-	-- Highlight todo, notes, etc in comments
-	{
+
+	{ -- Highlight todo, notes, etc in comments
 		"folke/todo-comments.nvim",
 		event = "VimEnter",
 		dependencies = { "nvim-lua/plenary.nvim" },
@@ -945,6 +978,7 @@ require("lazy").setup({
 			--  - yinq - [Y]ank [I]nside [N]ext [Q]uote
 			--  - ci'  - [C]hange [I]nside [']quote
 			require("mini.ai").setup({
+				n_lines = 1000,
 				custom_textobjects = {
 					f = require("mini.ai").gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }),
 					c = require("mini.ai").gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),
@@ -979,6 +1013,19 @@ require("lazy").setup({
 			--  Check out: https://github.com/echasnovski/mini.nvim
 		end,
 	},
+
+	{ -- File explorer
+		"stevearc/oil.nvim",
+		---@module 'oil'
+		---@type oil.SetupOpts
+		opts = {},
+		-- Optional dependencies
+		dependencies = { { "nvim-mini/mini.icons", opts = {} } },
+		-- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+		-- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+		lazy = false,
+	},
+
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
 		build = AIRGAPPED and nil or ":TSUpdate",
@@ -1010,43 +1057,15 @@ require("lazy").setup({
 			},
 			indent = { enable = true, disable = { "ruby" } },
 		},
-		-- There are additional nvim-treesitter modules that you can use to interact
-		-- with nvim-treesitter. You should go explore a few and see what interests you:
-		--
-		--    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-		--    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-		--    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 	},
 
-	-- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
-	-- init.lua. If you want these files, they are in the repository, so you can just download them and
-	-- place them in the correct locations.
-
-	-- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-	--
-	--  Here are some example plugins that I've included in the Kickstart repository.
-	--  Uncomment any of the lines below to enable them (you will need to restart nvim).
-	--
-	-- require 'kickstart.plugins.debug',
-	-- require 'kickstart.plugins.indent_line',
-	-- require 'kickstart.plugins.lint',
-	-- require 'kickstart.plugins.autopairs',
-	-- require 'kickstart.plugins.neo-tree',
-	-- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-
-	-- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-	--    This is the easiest way to modularize your config.
-	--
-	--  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-	-- { import = 'custom.plugins' },
-	--
 	-- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
 	-- Or use telescope!
 	-- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
 	-- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
 	install = { missing = not AIRGAPPED },
-	checker = { enabled = not AIRGAPPED },
+	checker = { enabled = not AIRGAPPED, notify = false },
 	change_detection = { enabled = not AIRGAPPED },
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
