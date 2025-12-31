@@ -236,8 +236,29 @@ local function toggle_terminal()
 	end
 end
 
-vim.keymap.set("n", "<C-\\>", toggle_terminal)
-vim.keymap.set("t", "<C-\\>", toggle_terminal)
+local function maximize_terminal()
+	-- Only work if terminal window is valid
+	if not term_win or not vim.api.nvim_win_is_valid(term_win) then
+		return
+	end
+
+	-- Check if already maximized by comparing height
+	local win_height = vim.api.nvim_win_get_height(term_win)
+	local total_height = vim.o.lines - vim.o.cmdheight - 2 -- account for statusline
+
+	if win_height < total_height - 5 then
+		-- Not maximized, so maximize it
+		vim.api.nvim_win_set_height(term_win, total_height)
+	else
+		-- Already maximized, restore to original size
+		vim.api.nvim_win_set_height(term_win, 20)
+	end
+end
+
+vim.keymap.set("n", "<C-g>", toggle_terminal)
+vim.keymap.set("t", "<C-g>", toggle_terminal)
+vim.keymap.set("n", "<leader>m", maximize_terminal)
+vim.keymap.set("t", "<leader>m", maximize_terminal)
 
 vim.api.nvim_create_autocmd({ "TermOpen", "TermEnter", "BufEnter", "WinEnter" }, {
 	desc = "Force line numbers in terminal buffers and start in insert mode",
@@ -317,6 +338,11 @@ require("lazy").setup({
 	--        end,
 	--    }
 	--
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-mini/mini.nvim" },
+		opts = {},
+	},
 	--
 	-- NOTE: Plugins can also be configured to run Lua code when they are loaded.
 	--
