@@ -20,25 +20,48 @@ compinit
 promptinit
 _comp_options+=(globdots) #include hidden files
 
-# brew bundle
-export HOMEBREW_BUNDLE_FILE=$HOME/.config/brewfile/Brewfile
+# vi keybindings
+bindkey -v
 
-# Homebrew on Linux
-if [[ $(uname) == "Linux" ]]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
+# local bin in path
+export PATH="$HOME/.local/bin:$PATH"
 
-# autosuggestions and vi-mode
-if [[ $(command -v brew) != "" ]]; then
-    source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-    source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-    source $(brew --prefix)/share/zsh-vi-mode/zsh-vi-mode.zsh
-fi
+# cursor to blinking block
+print -Pn "\e[1 q"
 
-# starship
-if [[ $(command -v starship) != "" ]]; then
-    eval "$(starship init zsh)"
-fi
+# helper function to source the first readable file from a list
+_zsh_source_first() {
+    local f
+    for f in "$@"; do
+        [[ -r "$f" ]] && source "$f" && return 0
+    done
+    return 1
+}
+
+# Homebrew prefixes
+_HB1="/opt/homebrew"      # apple silicon
+_HB2="/usr/local"         # intel
+
+# zsh-autosuggestions
+_zsh_source_first \
+    "$HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" \
+    "$HOME/.local/share/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" \
+    "$_HB1/share/zsh-autosuggestions/zsh-autosuggestions.zsh" \
+    "$_HB2/share/zsh-autosuggestions/zsh-autosuggestions.zsh" \
+    "/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh" \
+    "/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# zsh-syntax-highlighting
+_zsh_source_first \
+    "$HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+    "$HOME/.local/share/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+    "$_HB1/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+    "$_HB2/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+    "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+    "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+unset -f _zsh_source_first
+unset _HB1 _HB2
 
 # eza
 if [[ $(command -v eza) != "" ]]; then
@@ -54,13 +77,6 @@ fi
 
 # fzf
 if [[ $(command -v fzf) != "" ]]; then
-    # need to source these after the vi-mode plugin to avoid conflicts
-    function zvm_after_init() {
-        source <(fzf --zsh)
-        bindkey -r '^G' # workaround to make fzf-git keybindings work 
-        source $HOME/.config/fzf-git.sh/fzf-git.sh
-    }
-
     # use fd instead of find if available
     if [[ $(command -v fd) != "" ]]; then
         export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
@@ -76,6 +92,7 @@ if [[ $(command -v fzf) != "" ]]; then
         }
     fi
 
+    source <(fzf --zsh)
 fi
 
 # neovim
@@ -96,8 +113,12 @@ alias gp="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git
 
 # rust
 if [[ $(command -v cargo) != "" ]]; then
-    . ~/.cargo/env
-    export RUSTC_WRAPPER=$(which sccache)
+    source ~/.cargo/env
+
+    # sccache
+    if [[ $(command -v sccache) != "" ]]; then
+        export RUSTC_WRAPPER=$(which sccache)
+    fi
 fi
 
 # go
@@ -107,7 +128,22 @@ if [[ $(command -v go) != "" ]]; then
     export PATH=$PATH:$(go env GOPATH)/bin
 fi
 
+# daisy
+if [[ $(command -v daisy) != "" ]]; then
+    . <(daisy completion zsh)
+fi
+
 # nvm
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    source "$NVM_DIR/nvm.sh"
+
+    if [[ -s "$NVM_DIR/bash_completion" ]]; then
+        source "$NVM_DIR/bash_completion"  # works for zsh as well
+    fi
+fi
+
+# starship
+if [[ $(command -v starship) != "" ]]; then
+    eval "$(starship init zsh)"
+fi
