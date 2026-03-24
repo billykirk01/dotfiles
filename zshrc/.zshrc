@@ -1,3 +1,6 @@
+# colors
+export COLORTERM=truecolor
+
 # add a line in between commands
 precmd() {
     precmd() {
@@ -109,6 +112,7 @@ fi
 # git
 alias gs='git status'
 alias gc='git commit'
+alias gd='git diff'
 alias gp="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 
 # rust
@@ -124,7 +128,7 @@ fi
 # go
 export PATH=$PATH:/usr/local/go/bin
 if [[ $(command -v go) != "" ]]; then
-    export GOPATH=$HOME/development/go/
+    export GOPATH=$HOME/development/go
     export PATH=$PATH:$(go env GOPATH)/bin
 fi
 
@@ -142,6 +146,9 @@ if [[ -s "$NVM_DIR/nvm.sh" ]]; then
         source "$NVM_DIR/bash_completion"  # works for zsh as well
     fi
 fi
+
+# helix
+alias hx='helix'
 
 # starship
 if [[ $(command -v starship) != "" ]]; then

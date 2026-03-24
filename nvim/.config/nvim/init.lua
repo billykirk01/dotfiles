@@ -131,7 +131,7 @@ vim.keymap.set("n", "<leader>d", function()
 	-- Open quickfix and jump to first entry
 	vim.cmd("copen")
 	vim.cmd("cfirst")
-end, { desc = "Open diagnostics (smart quickfix)" })
+end, { desc = "Open [D]iagnostics in quickfix list" })
 
 local function is_qf_open()
 	local qf_info = vim.fn.getqflist({ winid = 1 })
@@ -173,7 +173,7 @@ end, { desc = "Toggle [O]il" })
 -- Open Neovim Config
 vim.keymap.set("n", "<leader>n", function()
 	vim.cmd.edit(vim.fn.stdpath("config") .. "/init.lua")
-end, { desc = "Open Neovim init.lua" })
+end, { desc = "Open [N]eovim init.lua" })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier than <C-\><C-n>
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
@@ -486,13 +486,12 @@ require("lazy").setup({
 
 			-- See `:help telescope.builtin`
 			local builtin = require("telescope.builtin")
-			vim.keymap.set("n", "<leader>h", builtin.help_tags, { desc = "[S]earch [H]elp" })
-			vim.keymap.set("n", "<leader>k", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
-			vim.keymap.set("n", "<leader>f", builtin.find_files, { desc = "[S]earch [F]iles" })
-			vim.keymap.set("n", "<leader>st", builtin.builtin, { desc = "[S]earch [T]elescope" })
-			vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
-			vim.keymap.set("n", "<leader>r", builtin.oldfiles, { desc = "[S]earch [R]ecent Files" })
-			vim.keymap.set("n", "<leader>b", builtin.buffers, { desc = "Find existing [B]uffers" })
+			vim.keymap.set("n", "<leader>h", builtin.help_tags, { desc = "Search [H]elp" })
+			vim.keymap.set("n", "<leader>k", builtin.keymaps, { desc = "Search [K]eymaps" })
+			vim.keymap.set("n", "<leader>f", builtin.find_files, { desc = "Find [F]iles" })
+			vim.keymap.set("n", "<leader>t", builtin.builtin, { desc = "Search [T]elescope builtins" })
+			vim.keymap.set("n", "<leader>p", builtin.oldfiles, { desc = "Find [P]revious Files" })
+			vim.keymap.set("n", "<leader>b", builtin.buffers, { desc = "Find [B]uffers" })
 
 			-- It's also possible to pass additional configuration options.
 			--  See `:help telescope.builtin.live_grep()` for information about particular keys
@@ -501,15 +500,15 @@ require("lazy").setup({
 					grep_open_files = true,
 					prompt_title = "Live Grep",
 				})
-			end, { desc = "Grep [/] in Open Files" })
+			end, { desc = "Find in Open Files" })
 
 			vim.keymap.set("n", "<leader>w/", function()
 				builtin.live_grep({
 					prompt_title = "Live Grep",
 				})
-			end, { desc = "Grep [/] in Workspace" })
+			end, { desc = "Find in Workspace" })
 
-			vim.keymap.set("n", "<leader>gc", builtin.git_commits, { desc = "[G]it [C]commits" })
+			vim.keymap.set("n", "<leader>gc", builtin.git_commits, { desc = "[G]it [C]ommits" })
 			vim.keymap.set("n", "<leader>gb", builtin.git_branches, { desc = "[G]it [B]ranches" })
 		end,
 	},
@@ -587,47 +586,26 @@ require("lazy").setup({
 						vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 					end
 
-					-- Rename the variable under your cursor.
-					--  Most Language Servers support renaming across files, etc.
-					map("<space>r", vim.lsp.buf.rename, "[R]ename")
-
-					-- Execute a code action, usually your cursor needs to be on top of an error
-					-- or a suggestion from your LSP for this to activate.
-					map("<space>a", vim.lsp.buf.code_action, "Code [A]ction", { "n", "x" })
-
 					-- Find references for the word under your cursor.
-					map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+					map("<leader>r", require("telescope.builtin").lsp_references, "Find [R]eferences")
 
 					-- Jump to the implementation of the word under your cursor.
-					--  Useful when your language has ways of declaring types without an actual implementation.
-					map("gi", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-
-					-- Jump to the definition of the word under your cursor.
-					--  This is where a variable was first declared, or where a function is defined, etc.
-					map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-
-					-- Jump to the type of the word under your cursor.
-					--  Useful when you're not sure what type a variable is and you want to see
-					--  the definition of its *type*, not where it was *defined*.
-					map("gy", require("telescope.builtin").lsp_type_definitions, "[G]oto T[y]pe Definition")
-
-					-- Jump to the declaration of the word under your cursor.
-					map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+					map("<leader>i", require("telescope.builtin").lsp_implementations, "Find [I]mplementations")
 
 					-- Fuzzy find all the symbols in your current document.
 					--  Symbols are things like variables, functions, types, etc.
-					map("<leader>s", require("telescope.builtin").lsp_document_symbols, "Document [S]ymbols")
+					map("<leader>s", require("telescope.builtin").lsp_document_symbols, "Find Document [S]ymbols")
 
 					-- Fuzzy find all the symbols in your current workspace.
 					--  Similar to document symbols, except searches over your entire project.
 					map(
 						"<leader>ws",
 						require("telescope.builtin").lsp_dynamic_workspace_symbols,
-						"[W]orkspace [S]ymbols"
+						"Find [W]orkspace [S]ymbols"
 					)
 
 					-- Show diagnostics
-					map("<leader>wd", require("telescope.builtin").diagnostics, "[W]orkspace [D]iagnostics")
+					map("<leader>wd", require("telescope.builtin").diagnostics, "Find [W]orkspace [D]iagnostics")
 
 					-- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
 					---@param client vim.lsp.Client
@@ -960,7 +938,7 @@ require("lazy").setup({
 				function()
 					require("flash").remote()
 				end,
-				desc = "Remote Flash",
+				desc = "[R]emote Flash",
 			},
 			{
 				"R",
